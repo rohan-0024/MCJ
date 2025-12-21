@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gold & Silver Price Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            min-height: 100vh;
+            color: #333;
+            padding-bottom: 40px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #d4af37 0%, #f4e4b7 50%, #d4af37 100%);
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(212, 175, 55, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            color: #1a1a1a;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .subtitle {
+            font-size: 12px;
+            color: #333;
+            margin-top: 5px;
+            letter-spacing: 2px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px 15px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid transparent;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .tab:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, #d4af37 0%, #f4e4b7 100%);
+            color: #1a1a1a;
+            border-color: #d4af37;
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
+        }
+
+        .calculator {
+            display: none;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 0.4s ease;
+        }
+
+        .calculator.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 16px 50px 16px 16px;
+            font-size: 18px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            background: #fff;
+            color: #333;
+            transition: all 0.3s ease;
+            -webkit-appearance: none;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #d4af37;
+            box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.1);
+        }
+
+        .input-unit {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 14px;
+            color: #666;
+            font-weight: 600;
+            pointer-events: none;
+        }
+
+        .calculate-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #d4af37 0%, #f4e4b7 100%);
+            border: none;
+            border-radius: 12px;
+            color: #1a1a1a;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.3);
+        }
+
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.4);
+        }
+
+        .calculate-btn:active {
+            transform: translateY(0);
+        }
+
+        .result-card {
+            display: none;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            border-radius: 16px;
+            padding: 25px;
+            margin-top: 25px;
+            text-align: center;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+            border: 2px solid #d4af37;
+        }
+
+        .result-card.show {
+            display: block;
+            animation: slideUp 0.4s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-label {
+            font-size: 14px;
+            color: #d4af37;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 600;
+        }
+
+        .result-price {
+            font-size: 42px;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 0 2px 10px rgba(212, 175, 55, 0.3);
+        }
+
+        .result-currency {
+            font-size: 28px;
+            margin-right: 5px;
+        }
+
+        .breakdown {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(212, 175, 55, 0.3);
+        }
+
+        .breakdown-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            color: #ccc;
+            font-size: 14px;
+        }
+
+        .breakdown-label {
+            color: #999;
+        }
+
+        .breakdown-value {
+            font-weight: 600;
+            color: #d4af37;
+        }
+
+        @media (max-width: 480px) {
+            .logo {
+                font-size: 24px;
+            }
+
+            .container {
+                padding: 15px 10px;
+            }
+
+            .calculator {
+                padding: 25px 15px;
+            }
+
+            .result-price {
+                font-size: 36px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <div class="logo">Swarna Mulya</div>
+        <div class="subtitle">Premium Gold & Silver</div>
+    </div>
+
+    <div class="container">
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('gold')">Gold Calculator</button>
+            <button class="tab" onclick="switchTab('silver')">Silver Calculator</button>
+        </div>
+
+        <div id="goldCalculator" class="calculator active">
+            <div class="input-group">
+                <label class="input-label">Weight</label>
+                <div class="input-wrapper">
+                    <input type="number" id="goldWeight" class="input-field" placeholder="0.00" step="0.01" min="0">
+                    <span class="input-unit">gm</span>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label class="input-label">Rate per Gram</label>
+                <div class="input-wrapper">
+                    <input type="number" id="goldRate" class="input-field" placeholder="0.00" step="0.01" min="0">
+                    <span class="input-unit">₹</span>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label class="input-label">Making Charges</label>
+                <div class="input-wrapper">
+                    <input type="number" id="goldMaking" class="input-field" placeholder="0.00" step="0.01" min="0">
+                    <span class="input-unit">%</span>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label class="input-label">HM Charges</label>
+                <div class="input-wrapper">
+                    <input type="number" id="goldHM" class="input-field" placeholder="0.00" step="0.01" min="0">
+                    <span class="input-unit">₹</span>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label class="input-label">GST</label>
+                <div class="input-wrapper">
+                    <input type="number" id="goldGST" class="input-field" placeholder="0.00" step="0.01" min="0"
+                        value="3">
+                    <span class="input-unit">%</span>
+                </div>
+            </div>
+
+            <button class="calculate-btn" onclick="calculateGold()">Calculate Gold Price</button>
+
+            <div id="goldResult" class="result-card">
+                <div class="result-label">Final Gold Price</div>
+                <div class="result-price">
+                    <span class="result-currency">₹</span><span id="goldFinalPrice">0</span>
+                </div>
+                <div class="breakdown">
+                    <div class="breakdown-item">
+                        <span class="breakdown-label">Base Amount:</span>
+                        <span class="breakdown-value" id="goldS1">₹0</span>
+                    </div>
+                    <div class="breakdown-item">
+                        <span class="breakdown-label">After Making:</span>
+                        <span class="breakdown-value" id="goldS2">₹0</span>
+                    </div>
+                    <div class="breakdown-item">
+                        <span class="breakdown-label">After HM:</span>
+                        <span class="breakdown-value" id="goldS3">₹0</span>
+                    </div>
+                    <div class="breakdown-item">
+                        <span class="breakdown-label">GST Amount:</span>
+                        <span class="breakdown-value" id="goldGSTAmount">₹0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="silverCalculator" class="calculator">
+            <div class="input-group">
+                <label class="input-label">Weight</label>
+                <div class="input-wrapper">
+                    <input type="number" id="silverWeight" class="input-field" placeholder="0.00" step="0.01" min="0">
+                    <span class="input-unit">gm</span>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label class="input-label">Rate per Gram</label>
+                <div class="input-wrapper">
+                    <input type="number" id="silverRate" class="input-field" placeholder="0.00" step="0.01" min="0">
+                    <span class="input-unit">₹</span>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label class="input-label">Making Charges per Gram</label>
+                <div class="input-wrapper">
+                    <input type="number" id="silverMaking" class="input-field" placeholder="0.00" step="0.01" min="0">
+                    <span class="input-unit">₹</span>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label class="input-label">GST</label>
+                <div class="input-wrapper">
+                    <input type="number" id="silverGST" class="input-field" placeholder="0.00" step="0.01" min="0"
+                        value="3">
+                    <span class="input-unit">%</span>
+                </div>
+            </div>
+
+            <button class="calculate-btn" onclick="calculateSilver()">Calculate Silver Price</button>
+
+            <div id="silverResult" class="result-card">
+                <div class="result-label">Final Silver Price</div>
+                <div class="result-price">
+                    <span class="result-currency">₹</span><span id="silverFinalPrice">0</span>
+                </div>
+                <div class="breakdown">
+                    <div class="breakdown-item">
+                        <span class="breakdown-label">Base Amount:</span>
+                        <span class="breakdown-value" id="silverS1">₹0</span>
+                    </div>
+                    <div class="breakdown-item">
+                        <span class="breakdown-label">GST Amount:</span>
+                        <span class="breakdown-value" id="silverGSTAmount">₹0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(type) {
+            const tabs = document.querySelectorAll('.tab');
+            const calculators = document.querySelectorAll('.calculator');
+
+            tabs.forEach(tab => tab.classList.remove('active'));
+            calculators.forEach(calc => calc.classList.remove('active'));
+
+            if (type === 'gold') {
+                tabs[0].classList.add('active');
+                document.getElementById('goldCalculator').classList.add('active');
+            } else {
+                tabs[1].classList.add('active');
+                document.getElementById('silverCalculator').classList.add('active');
+            }
+        }
+
+        function calculateGold() {
+            const w = parseFloat(document.getElementById('goldWeight').value) || 0;
+            const r = parseFloat(document.getElementById('goldRate').value) || 0;
+            const m = parseFloat(document.getElementById('goldMaking').value) || 0;
+            const h = parseFloat(document.getElementById('goldHM').value) || 0;
+            const g = parseFloat(document.getElementById('goldGST').value) || 0;
+
+            const s1 = w * r;
+            const s2 = s1 + (m / 100 * s1);
+            const s3 = s2 + h;
+            const gstAmount = g / 100 * s3;
+            const s4 = s3 + gstAmount;
+
+            document.getElementById('goldS1').textContent = '₹' + s1.toFixed(2);
+            document.getElementById('goldS2').textContent = '₹' + s2.toFixed(2);
+            document.getElementById('goldS3').textContent = '₹' + s3.toFixed(2);
+            document.getElementById('goldGSTAmount').textContent = '₹' + gstAmount.toFixed(2);
+            document.getElementById('goldFinalPrice').textContent = s4.toFixed(2);
+
+            document.getElementById('goldResult').classList.add('show');
+        }
+
+        function calculateSilver() {
+            const w = parseFloat(document.getElementById('silverWeight').value) || 0;
+            const r = parseFloat(document.getElementById('silverRate').value) || 0;
+            const m = parseFloat(document.getElementById('silverMaking').value) || 0;
+            const g = parseFloat(document.getElementById('silverGST').value) || 0;
+
+            const s1 = w * (r + m);
+            const gstAmount = g / 100 * s1;
+            const total = s1 + gstAmount;
+
+            document.getElementById('silverS1').textContent = '₹' + s1.toFixed(2);
+            document.getElementById('silverGSTAmount').textContent = '₹' + gstAmount.toFixed(2);
+            document.getElementById('silverFinalPrice').textContent = total.toFixed(2);
+
+            document.getElementById('silverResult').classList.add('show');
+        }
+    </script>
+</body>
+
+</html>
