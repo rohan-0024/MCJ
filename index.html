@@ -356,6 +356,8 @@
 
 
 
+
+
             <button class="calculate-btn" onclick="calculateGold()">Calculate Gold Price</button>
 
             <div id="goldResult" class="result-card">
@@ -369,7 +371,7 @@
                         <span class="breakdown-value" id="goldBaseAmount">₹0</span>
                     </div>
                     <div class="breakdown-item">
-                        <span class="breakdown-label">Making Charges (<span id="goldMakingPercent">14</span>%):</span>
+                        <span class="breakdown-label">Making Charges:</span>
                         <span class="breakdown-value" id="goldMakingAmount">₹0</span>
                     </div>
                     <div class="breakdown-item">
@@ -381,7 +383,8 @@
                         <span class="breakdown-value" id="goldOthersAmount">₹0</span>
                     </div>
                     <div class="breakdown-item">
-                        <span class="breakdown-label">GST Amount (<span id="gstAmount">3</span>%):</span>
+                        <span class="breakdown-label">GST Amount(<span id="gstAmount">3</span><span
+                                id="gstAmount">%</span>):</span>
                         <span class="breakdown-value" id="goldGSTAmount">₹0</span>
                     </div>
                 </div>
@@ -431,7 +434,6 @@
                 </div>
             </div>
 
-
             <button class="calculate-btn" onclick="calculateSilver()">Calculate Silver Price</button>
 
             <div id="silverResult" class="result-card">
@@ -454,7 +456,8 @@
                         <span class="breakdown-value" id="silverOthersAmount">₹0</span>
                     </div>
                     <div class="breakdown-item">
-                        <span class="breakdown-label">GST Amount (<span id="gstAmount">3</span>%):</span>
+                        <span class="breakdown-label">GST Amount(<span id="gstAmount">3</span><span
+                                id="gstAmount">%</span>):</span>
                         <span class="breakdown-value" id="silverGSTAmount">₹0</span>
                     </div>
                 </div>
@@ -488,7 +491,17 @@
             const o = parseFloat(document.getElementById('goldOthers').value) || 0;
 
             const s1 = w * r;
-            const makingAmount = (m / 100) * s1;
+
+            // Logic: If weight is less than 0.700 gm, making charges = fixed 1200
+            let makingAmount;
+            if (w < 0.700) {
+                makingAmount = 1200;
+
+            } else {
+                makingAmount = (m / 100) * s1;
+
+            }
+
             const s2 = s1 + makingAmount;
             const s3 = s2 + h;
             const s4 = s3 + o;
@@ -496,7 +509,6 @@
             const finalPrice = s4 + gstAmount;
 
             document.getElementById('goldBaseAmount').textContent = '₹' + s1.toFixed(2);
-            document.getElementById('goldMakingPercent').textContent = m.toFixed(0);
             document.getElementById('goldMakingAmount').textContent = '₹' + makingAmount.toFixed(2);
             document.getElementById('goldHMAmount').textContent = '₹' + h.toFixed(2);
             document.getElementById('goldOthersAmount').textContent = '₹' + o.toFixed(2);
