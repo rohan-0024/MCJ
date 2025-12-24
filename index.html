@@ -447,9 +447,10 @@
                         <span class="breakdown-value" id="silverBaseAmount">₹0</span>
                     </div>
                     <div class="breakdown-item">
-                        <span class="breakdown-label">Making Charges (<span id="silverMakingRate">25</span> INR per
-                            gram):</span>
+                        <span class="breakdown-label">Making charges:</span>
                         <span class="breakdown-value" id="silverMakingAmount">₹0</span>
+
+                        <span id="silverMakingRate" style="display:none;">25</span>
                     </div>
                     <div class="breakdown-item">
                         <span class="breakdown-label">Others:</span>
@@ -526,7 +527,14 @@
             const o = parseFloat(document.getElementById('silverOthers').value) || 0;
 
             const baseAmount = w * r;
-            const makingAmount = w * m;
+            //const makingAmount = w * m;
+            if (w <= 5) {
+                makingAmount = 150;
+
+            } else {
+                makingAmount = w * m;
+
+            }
             const s1 = baseAmount + makingAmount;
             const s2 = s1 + o;
             const gstAmount = (g / 100) * s2;
